@@ -4,4 +4,5 @@ project(3980_Assignment1 C)
 set(CMAKE_C_STANDARD 17)
 
 # point to the correct file path
-add_executable(elfinspect src/elfinspect.c)
+add_executable(elfinspect src/elfinspect.c
+        elfinspect.c)

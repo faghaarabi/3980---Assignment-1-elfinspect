@@ -1,5 +1,5 @@
 // elfinspect.c - COMP 3980 Assignment 1
-
+// Simple ELF header inspection using POSIX I/O
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,6 +39,29 @@ ssize_t safe_read(int fd, void *buf, size_t count) {
         else return -1;                // error
     }
     return (ssize_t)off;
+}
+
+// simple lookup for file type
+const char* type_to_string(uint16_t type) {
+    switch (type) {
+        case 0: return "None (ET_NONE)";
+        case 1: return "Relocatable (ET_REL)";
+        case 2: return "Executable (ET_EXEC)";
+        case 3: return "Shared Object (ET_DYN)";
+        case 4: return "Core (ET_CORE)";
+        default: return "Unknown";
+    }
+}
+
+// lookup for machine
+const char* machine_to_string(uint16_t machine) {
+    switch (machine) {
+        case 3:  return "Intel 80386 (EM_386)";
+        case 62: return "x86-64 (EM_X86_64)";
+        case 40: return "ARM (EM_ARM)";
+        case 183:return "AArch64 (EM_AARCH64)";
+        default: return "Unknown";
+    }
 }
 
 int main(int argc, char *argv[]) {
@@ -136,7 +159,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // ✅ Print structured output
+    // Print structured output
     printf("Valid ELF: yes\n");
     printf("Magic: %02x %02x %02x %02x\n",
            ident[EI_MAG0], ident[EI_MAG1], ident[EI_MAG2], ident[EI_MAG3]);
@@ -156,8 +179,8 @@ int main(int argc, char *argv[]) {
         printf("Endianness: Invalid (%d)\n", data);
 
     printf("Ident Version: %d\n", ident[EI_VERSION]);
-    printf("Type: %u\n", e_type);
-    printf("Machine: %u\n", e_machine);
+    printf("Type: %s\n", type_to_string(e_type));
+    printf("Machine: %s\n", machine_to_string(e_machine));
     printf("Entry point: 0x%lx\n", (unsigned long)e_entry);
 
     close(fd);

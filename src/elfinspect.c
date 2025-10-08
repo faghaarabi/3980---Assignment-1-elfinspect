@@ -28,14 +28,14 @@
 #define ELFDATA2LSB 1
 #define ELFDATA2MSB 2
 
-// ---------- byte-swap helpers ----------
+
 static inline uint16_t swap16(uint16_t x){ return (x>>8)|(x<<8); }
 static inline uint32_t swap32(uint32_t x){ return ((x>>24)&0xff)|((x>>8)&0xff00)|((x<<8)&0xff0000)|((x<<24)&0xff000000); }
 static inline uint64_t swap64(uint64_t x){
     return ((uint64_t)swap32((uint32_t)x)<<32) | (uint64_t)swap32((uint32_t)(x>>32));
 }
 
-// ---------- safe read ----------
+
 ssize_t safe_read(int fd, void *buf, size_t count) {
     size_t off=0; ssize_t r;
     while (off<count) {
@@ -48,7 +48,7 @@ ssize_t safe_read(int fd, void *buf, size_t count) {
     return (ssize_t)off;
 }
 
-// ---------- lookup helpers ----------
+
 const char* type_to_string(uint16_t t){
     switch(t){
         case 0:return "None (ET_NONE)";
@@ -69,7 +69,7 @@ const char* machine_to_string(uint16_t m){
     }
 }
 
-// ---------- main ----------
+
 int main(int argc,char*argv[]){
     if(argc!=2){ fprintf(stderr,"Usage: %s <filename>\n",argv[0]); return 1; }
     const char*file=argv[1];
@@ -104,13 +104,13 @@ int main(int argc,char*argv[]){
         close(fd); return 1;
     }
 
-    // read raw fields as little-endian
+
     uint16_t e_type   = *(uint16_t*)&hdr[16];
     uint16_t e_machine= *(uint16_t*)&hdr[18];
     uint32_t e_version= *(uint32_t*)&hdr[20];
     uint64_t e_entry  = (klass==ELFCLASS32)? *(uint32_t*)&hdr[24] : *(uint64_t*)&hdr[24];
 
-    // if file is Big Endian -> swap bytes
+
     if(data==ELFDATA2MSB){
         e_type   = swap16(e_type);
         e_machine= swap16(e_machine);
